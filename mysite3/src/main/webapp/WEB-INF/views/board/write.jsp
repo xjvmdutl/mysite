@@ -16,7 +16,7 @@
 	<c:import url="/WEB-INF/views/includes/header.jsp"/>
 		<div id="content">
 			<div id="board">
-				<form class="board-form" method="post" action="${pageContext.servletContext.contextPath }/board">
+				<form class="board-form" method="post" action="${pageContext.servletContext.contextPath }/board/write">
 					<input type = "hidden" name = "g_no" value="${vo.g_no }">
 					<input type = "hidden" name = "o_no" value="${vo.o_no }">
 					<input type = "hidden" name = "depth" value="${vo.depth }">
@@ -31,7 +31,7 @@
 						<tr>
 							<td class="label">내용</td>
 							<td>
-								<textarea id="content" name="content"></textarea>
+								<textarea id="content" name="contents"></textarea>
 							</td>
 						</tr>
 					</table>

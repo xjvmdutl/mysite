@@ -4,10 +4,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,13 +46,54 @@ public class BoardController {
 		BoardVo vo=boardservice.get(no);
 		boardservice.updatehit(vo);
 		model.addAttribute("vo",vo);
-		UserVo uservo=(UserVo) session.getAttribute("authUser");
 		return "board/view";
 	}
-	@RequestMapping(value="/modify",method=RequestMethod.GET)
-	public String write(@PathVariable("no") Long no,HttpSession session,Model model) {
+	@RequestMapping(value="/modify/{no}",method=RequestMethod.GET)
+	public String modify(@PathVariable("no") Long no,HttpSession session,Model model) {
+		UserVo authUser=(UserVo)session.getAttribute("authUser");
+		if(authUser==null)
+			return "/board";
 		BoardVo vo=boardservice.getInfo(no);
 		model.addAttribute("vo",vo);
 		return "board/modify";
+	}
+	@RequestMapping(value="/modify/{no}",method = RequestMethod.POST)
+	public String modify(@PathVariable("no") Long no,@ModelAttribute BoardVo vo) {
+		vo.setNo(no);
+		System.out.print(vo);
+		boardservice.modify(vo);
+		return "redirect:/board/view/"+no;
+	}
+	@RequestMapping(value="/write",method=RequestMethod.GET)
+	public String write(HttpSession session) {
+		if(session != null && session.getAttribute("authUser") !=null)
+			return "/board/write";
+		return "redirect:/board";
+	}
+	@RequestMapping(value="/write",method=RequestMethod.POST)
+	public String write(@ModelAttribute BoardVo vo,HttpSession session) {
+		UserVo authUser=(UserVo)session.getAttribute("authUser");
+		vo.setUser_no(authUser.getNo());
+		if(vo.getG_no() == null || vo.getO_no()==null || vo.getDepth() == null){
+			boardservice.insertGroup(vo);
+			
+		}else {
+			boardservice.updateRequest(vo);
+			boardservice.insertRequest(vo);
+		}
+		return "redirect:/board";
+	}
+	@RequestMapping(value="/request/{no}",method=RequestMethod.GET)
+	public String request(@PathVariable("no") Long no,Model model,HttpSession session) {
+		if(session == null || (session.getAttribute("authUser") ==null))
+			return "redirect:/board";
+		BoardVo vo = boardservice.getInfo(no);
+		model.addAttribute("vo",vo);
+		return "board/write";
+	}
+	@RequestMapping(value="delete/{no}",method=RequestMethod.GET)
+	public String delete(@PathVariable("no") Long no){
+		boardservice.updatestatus(no);
+		return "redirect:/board";
 	}
 }

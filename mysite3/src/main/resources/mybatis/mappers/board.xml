@@ -49,8 +49,8 @@
 	]]>
 	<if test="kwd.length()>0 ">
 	<![CDATA[
-	and 	(board.title like '%'||#{kwd}||'%' 
-	or 		board.contents like '%'||#{kwd}||'%') 
+	and 	(board.title like concat('%',#{kwd},'%') 
+	or 		board.contents like concat('%',#{kwd},'%')) 
 	]]>
 	</if>
 	<![CDATA[
@@ -66,8 +66,8 @@
 	]]>
 	<if test="_parameter != null">
 	<![CDATA[
-		where 	(title like '%'||#{_parameter}||'%' 
-		or 		contents like '%'||#{_parameter}||'%') 
+		where 	(board.title like concat('%',#{kwd},'%') 
+	or 		board.contents like concat('%',#{kwd},'%')) 
 	]]>
 		</if>
 	</select>

@@ -26,46 +26,9 @@ public class BoardDao {
 	private SqlSession sqlsession;
 	@Autowired
 	private DataSource datasource;
-	public Boolean insert(BoardVo vo) {
-		Connection connection = null;
-	      PreparedStatement pstmt = null;
-	      Statement stmt = null;
-	      Boolean result = false;
-	      ResultSet rs =null;
-	      try {
-	         connection = datasource.getConnection();
-	         String sql = "insert into board values(null,?,?,0,now(),(select ifnull(max(b.g_no)+1,1) from board as b),1,0,'insert',?)";
-	         pstmt = connection.prepareStatement(sql);
-	         pstmt.setString(1, vo.getTitle());
-	         pstmt.setString(2, vo.getContents());
-	         pstmt.setLong(3, vo.getUser_no());
-	         int count = pstmt.executeUpdate();
-	         result = (count==1);
-	         stmt=connection.createStatement();
-	         rs =stmt.executeQuery("select last_insert_id()");//본래는 메소드 한번에 쿼리 하나씩이지만 이건 특이한 케이스이다.
-	         if(rs.next()) {
-	        	Long no=rs.getLong(1);
-	         	vo.setNo(no);
-	         }
-	      }catch (SQLException e) {
-	         System.out.println("error : " + e);
-	      } finally {
-	         try{
-	        	if(pstmt != null) {
-	               pstmt.close();
-	            }if(rs!=null) {
-	            	rs.close();
-	            }if(stmt!=null) {
-	            	stmt.close();
-	            }if(connection != null){
-	               connection.close();
-	            }
-	         } catch (Exception e) {
-	            // TODO: handle exception
-	            e.printStackTrace();
-	         }
-	      }
-	      return result;
+	public Boolean insertGroup(BoardVo vo) {
+		int count = sqlsession.insert("board.insertbygroup",vo);
+		return count==1;
 	}
 	public List<BoardVo> selectList(int start,int finish,String kwd) {
 		Map<String,Object> map=new HashMap<String, Object>();
@@ -141,165 +104,34 @@ public class BoardDao {
 	      }
 	      return result;
 	}
-	public Boolean update(BoardVo vo) {
-		Connection connection = null;
-	      PreparedStatement pstmt = null;
-	      Statement stmt = null;
-	      Boolean result = false;
-	      ResultSet rs =null;
-	      try {
-	         connection = datasource.getConnection();
-	        
-	         String sql = "update board set title=?,contents=?,status='modify' where no=?";
-	         pstmt = connection.prepareStatement(sql);
-	         pstmt.setString(1, vo.getTitle());
-	         pstmt.setString(2, vo.getContents());
-	         pstmt.setLong(3, vo.getNo());
-	         int count = pstmt.executeUpdate();
-	         result = (count==1);
-	      }catch (SQLException e) {
-	         System.out.println("error : " + e);
-	      } finally {
-	         try{
-	        	if(pstmt != null) {
-	               pstmt.close();
-	            }if(rs!=null) {
-	            	rs.close();
-	            }if(stmt!=null) {
-	            	stmt.close();
-	            }if(connection != null){
-	               connection.close();
-	            }
-	         } catch (Exception e) {
-	            // TODO: handle exception
-	            e.printStackTrace();
-	         }
-	      }
-	      return result;
+	public Boolean modify(BoardVo vo) {
+		int count = sqlsession.update("updatebytitlebycontentsbystatus",vo);
+		return count==1;
 	}
 	
 	public Boolean updatestatus(Long no) {
-		Connection connection = null;
-	      PreparedStatement pstmt = null;
-	      Statement stmt = null;
-	      Boolean result = false;
-	      ResultSet rs =null;
-	      
-	      try {
-	         connection = datasource.getConnection();
-	         String sql = "update board set status='delete' where no=?";
-	         pstmt = connection.prepareStatement(sql);
-	         
-	         pstmt.setLong(1, no);
-	         int count = pstmt.executeUpdate();
-	         result = (count==1);
-	         
-	      }catch (SQLException e) {
-	         System.out.println("error : " + e);
-	      } finally {
-	         try{
-	        	if(pstmt != null) {
-	               pstmt.close();
-	            }if(rs!=null) {
-	            	rs.close();
-	            }if(stmt!=null) {
-	            	stmt.close();
-	            }if(connection != null){
-	               connection.close();
-	            }
-	         } catch (Exception e) {
-	            // TODO: handle exception
-	            e.printStackTrace();
-	         }
-	      }
-	      return result;
+		int count =sqlsession.update("updatebydel",no);
+		return count==1;
 	}
 
 	public Boolean updateRequest(BoardVo vo) {
-		Connection connection = null;
-	      PreparedStatement pstmt = null;
-	      Statement stmt = null;
-	      Boolean result = false;
-	      ResultSet rs =null;
-	      
-	      try {
-	         connection = datasource.getConnection();
-	         String sql = "update board set o_no=o_no+1 where g_no = ? and o_no >= ?";
-	         pstmt = connection.prepareStatement(sql);
-	         
-	         pstmt.setLong(1, vo.getG_no());
-	         pstmt.setLong(2, vo.getO_no());
-	         int count = pstmt.executeUpdate();
-	         result = (count==1);
-	         
-	      }catch (SQLException e) {
-	         System.out.println("error : " + e);
-	      } finally {
-	         try{
-	        	if(pstmt != null) {
-	               pstmt.close();
-	            }if(rs!=null) {
-	            	rs.close();
-	            }if(stmt!=null) {
-	            	stmt.close();
-	            }if(connection != null){
-	               connection.close();
-	            }
-	         } catch (Exception e) {
-	            // TODO: handle exception
-	            e.printStackTrace();
-	         }
-	      }
-	      return result;
+		vo.setO_no(vo.getO_no()+1);
+		vo.setDepth(vo.getDepth()+1);
+		int count = sqlsession.update("updatebyrequest",vo);
+		return count>=0;
 	}
 	public Boolean insertRequest(BoardVo vo) {
-		Connection connection = null;
-	    PreparedStatement pstmt = null;
-	    Statement stmt = null;
-	    Boolean result = false;
-	    ResultSet rs =null;
-	      try {
-	         connection = datasource.getConnection();
-	         String sql = "insert into board values(null,?,?,0,now(),?,?,?,'insert',?)";
-	         pstmt = connection.prepareStatement(sql);
-	         pstmt.setString(1, vo.getTitle());
-	         pstmt.setString(2, vo.getContents());
-	         pstmt.setLong(3, vo.getG_no());
-	         pstmt.setLong(4,vo.getO_no());
-	         pstmt.setLong(5, vo.getDepth());
-	         pstmt.setLong(6, vo.getUser_no());
-	         int count = pstmt.executeUpdate();
-	         result = (count==1);
-	         stmt=connection.createStatement();
-	         rs =stmt.executeQuery("select last_insert_id()");//본래는 메소드 한번에 쿼리 하나씩이지만 이건 특이한 케이스이다.
-	         if(rs.next()) {
-	        	Long no=rs.getLong(1);
-	         	vo.setNo(no);
-	         }
-	      }catch (SQLException e) {
-	         System.out.println("error : " + e);
-	      } finally {
-	         try{
-	        	if(pstmt != null) {
-	               pstmt.close();
-	            }if(rs!=null) {
-	            	rs.close();
-	            }if(stmt!=null) {
-	            	stmt.close();
-	            }if(connection != null){
-	               connection.close();
-	            }
-	         } catch (Exception e) {
-	            // TODO: handle exception
-	            e.printStackTrace();
-	         }
-	      }
-	      return result;
+		vo.setO_no(vo.getO_no()+1);
+		vo.setDepth(vo.getDepth()+1);
+		int count = sqlsession.insert("insertbyrequest",vo);
+		return count==1;
 	}
 	public Boolean updateHit(BoardVo vo) {
 		int count=sqlsession.update("board.updatebyhit",vo.getNo());
 		return count==1;
 	}
+	
+
 	
 	
 }

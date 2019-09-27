@@ -100,7 +100,7 @@
 				<!-- pager 추가 -->
 				<c:if test="${not empty authUser}">
 					<div class="bottom">
-						<a href="${pageContext.servletContext.contextPath }/board/write id="new-book">글쓰기</a>
+						<a href="${pageContext.servletContext.contextPath }/board/write" id="new-book">글쓰기</a>
 					</div>
 				</c:if>				
 			</div>

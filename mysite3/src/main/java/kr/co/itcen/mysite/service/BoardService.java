@@ -31,4 +31,24 @@ public class BoardService {
 	public BoardVo getInfo(Long no) {
 		return boarddao.getInfo(no);
 	}
+
+	public Boolean modify(BoardVo vo) {
+		return boarddao.modify(vo);
+	}
+
+	public Boolean insertGroup(BoardVo vo) {
+		return boarddao.insertGroup(vo);
+	}
+
+	public Boolean updateRequest(BoardVo vo) {
+		return boarddao.updateRequest(vo);
+	}
+
+	public Boolean insertRequest(BoardVo vo) {
+		return boarddao.insertRequest(vo);
+	}
+
+	public Boolean updatestatus(Long no) {
+		return boarddao.updatestatus(no);
+	}
 }
