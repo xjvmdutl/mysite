@@ -8,6 +8,49 @@
 <title>mysite</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link href="${pageContext.servletContext.contextPath}/assets/css/user.css" rel="stylesheet" type="text/css">
+<script src="${pageContext.servletContext.contextPath}/assets/js/jquery/jquery-1.9.0.js" type="text/javascript" ></script>
+<script>
+	$(function(){
+		
+		$("#input-email").change(function(){
+			$("#btn-check-email").show();
+			$("#img-checked").hide()();
+		});
+		
+		$("#btn-check-email").click(function(){
+			var email=$("#input-email").val();
+			if(email==""){
+				return;
+			}
+			//AJAX 통신
+			$.ajax({
+				url:"${pageContext.servletContext.contextPath}/api/user/checkemail?email="+email,
+				type:"get",
+				dataType:"json",
+				data:"",
+				success:function(response){
+					if(response.result =="fail"){
+						console.error(response.message);
+						return
+					}
+					if(response.data==true){
+						alert("이미 존재하는 메일입니다");
+						$("#input-email").val("");
+						$("#input-email").focus();
+						return;
+					}
+					$("#btn-check-email").hide();
+					$("#img-checked").show();
+				},
+				error:function(xhr,error){
+					console.err("error"+error);
+				}
+				
+			});
+			//http://localhost:8088/mysite3/api/user/checkemail?email=widn45@naver.com
+		});
+	});
+</script>
 </head>
 <body>
 	<div id="container">
@@ -20,9 +63,9 @@
 					<input id="name" name="name" type="text" value="">
 
 					<label class="block-label" for="email">이메일</label>
-					<input id="email" name="email" type="text" value="">
-					<input type="button" value="id 중복체크">
-					
+					<input id="input-email" name="email" type="text" value="">
+					<input id="btn-check-email" type="button" value="중복 체크">
+					<img id="img-checked" style='width:20px; display:none' src='${pageContext.servletContext.contextPath}/assets/images/check.png' />
 					<label class="block-label">패스워드</label>
 					<input name="password" type="password" value="">
 					
