@@ -37,6 +37,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
+			<!-- spring aspect -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${org.springframework-version}</version>			
+		</dependency>
 		<!-- MyBatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -48,6 +54,19 @@
 			<artifactId>mybatis-spring</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+		<!-- validation -->
+		<dependency>
+		   <groupId>javax.validation</groupId>
+		   <artifactId>validation-api</artifactId>
+		   <version>1.0.0.GA</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>org.hibernate</groupId>
+		   <artifactId>hibernate-validator</artifactId>
+		   <version>4.2.0.Final</version>
+		</dependency>
+				
 		<!-- spring jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>

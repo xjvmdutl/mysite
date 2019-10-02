@@ -14,7 +14,7 @@
 		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
 		<div id="content">
 			<div id="user">
-				<form id="login-form" name="loginform" method="post" action="${pageContext.servletContext.contextPath}/user/login">
+				<form id="login-form" name="loginform" method="post" action="${pageContext.servletContext.contextPath}/user/auth">
 					<label class="block-label" for="email">이메일</label>
 					<input id="email" name="email" type="text" value="">
 					<label class="block-label" >패스워드</label>

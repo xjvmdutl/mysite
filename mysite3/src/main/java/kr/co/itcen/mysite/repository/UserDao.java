@@ -11,15 +11,18 @@ import org.springframework.stereotype.Repository;
 
 import kr.co.itcen.mysite.exception.UserDaoException;
 import kr.co.itcen.mysite.vo.UserVo;
+
 @Repository
 public class UserDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
 	public Boolean insert(UserVo vo) throws UserDaoException{
-		int count=sqlSession.insert("user.insert",vo);
-		System.out.println(vo);
-		return count == 1;
+		
+		
+		int count=sqlSession.insert("user.insert",vo);//관심, 나머지는 횡단 관심이다.
+		
+		return (count == 1);
 	}
 	public UserVo get(UserVo vo) {
 		UserVo result = sqlSession.selectOne("user.getByEmailAndPassword1",vo);

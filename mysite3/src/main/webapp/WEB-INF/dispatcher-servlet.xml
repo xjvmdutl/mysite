@@ -14,30 +14,55 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context.xsd">
-	
+	<aop:aspectj-autoproxy />
+
 	<!-- validator, conversionService, messageConverter를 자동으로 등록 -->
 	<mvc:annotation-driven>
 		<!-- Validator, Conversion Service, Formatter Message Converter 설정 -->
 		<mvc:message-converters>
-			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+			<bean
+				class="org.springframework.http.converter.StringHttpMessageConverter">
 				<property name="supportedMediaTypes">
 					<list>
 						<value>text/html; charset=UTF-8</value>
 					</list>
 				</property>
 			</bean>
-			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="supportedMediaTypes">
-				<list>
-				<value>application/json; charset=UTF-8</value>
-				</list>
+					<list>
+						<value>application/json; charset=UTF-8</value>
+					</list>
 				</property>
-				</bean>
+			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 	<!-- 서블릿 컨테이너의 디폴트 서블릿 위임 핸들러 -->
-	<mvc:default-servlet-handler/>
-	<!--ViewResolver 설정  -->  
+	<mvc:default-servlet-handler />
+	<mvc:interceptors>
+		<!--  
+			<mvc:interceptor>
+				<mvc:mapping path="/user/**"/>
+				<bean class="kr.co.itcen.mysite.interceptor.MyInterceptor02"/>
+			</mvc:interceptor>
+		-->
+		<mvc:interceptor>
+			<mvc:mapping path="/user/auth"/>
+			<bean class="kr.co.itcen.mysite.security.LoginInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/user/logout"/>
+			<bean class="kr.co.itcen.mysite.security.LogoutInterceptor"/>
+		</mvc:interceptor>
+		<!--  
+		<mvc:interceptor>
+			<mvc:mapping path="/user/update,/board/*"/>
+			<bean class="kr.co.itcen.mysite.security.UpdateInterceptor"/>
+		</mvc:interceptor>
+		-->
+	</mvc:interceptors>
+	<!--ViewResolver 설정 -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"
@@ -46,9 +71,18 @@
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="1" />
 	</bean>
-	
+	<!-- 6. MessageSource -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	   <property name="basenames">
+	      <list>
+		<value>messages/messages_ko</value>
+	      </list>
+	   </property>
+	</bean>
+
 	<context:annotation-config />
+
 	<context:component-scan
-		base-package="kr.co.itcen.mysite.controller,kr.co.itcen.mysite.exception" />
-	
+		base-package="kr.co.itcen.mysite.controller, kr.co.itcen.mysite.exception" />
+
 </beans>

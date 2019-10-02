@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +14,6 @@
 <script src="${pageContext.servletContext.contextPath}/assets/js/jquery/jquery-1.9.0.js" type="text/javascript" ></script>
 <script>
 	$(function(){
-		
 		$("#input-email").change(function(){
 			$("#btn-check-email").show();
 			$("#img-checked").hide()();
@@ -58,32 +60,49 @@
 		<div id="content">
 			<div id="user">
 
-				<form id="join-form" name="joinForm" method="post" action="${pageContext.servletContext.contextPath}/user/join">
+				<form:form
+				 modelAttribute="userVo"
+				 id="join-form" 
+				 name="joinForm" 
+				 method="post" 
+				 action="${pageContext.servletContext.contextPath}/user/join">
 					<label class="block-label" for="name">이름</label>
-					<input id="name" name="name" type="text" value="">
-
+					<form:input path="name" />
+					<spring:hasBindErrors name="userVo">
+					<br>
+						<c:if test='${errors.hasFieldErrors("name") }'>
+						<p style="font-weight:bold; color:red; text-align:left; padding:2px 0 0 0">
+							<spring:message code='${errors.getFieldError("name").codes[0] }' text='${errors.getFieldError("name").defaultMessage }'></spring:message>
+						</p>
+						</c:if>
+					</spring:hasBindErrors>
 					<label class="block-label" for="email">이메일</label>
-					<input id="input-email" name="email" type="text" value="">
+					<form:input path="email" />
 					<input id="btn-check-email" type="button" value="중복 체크">
 					<img id="img-checked" style='width:20px; display:none' src='${pageContext.servletContext.contextPath}/assets/images/check.png' />
+					<p style="font-weight:bold; color:red; text-align:left; padding:2px 0 0 0">
+						<form:errors path="email" />
+					</p>
 					<label class="block-label">패스워드</label>
-					<input name="password" type="password" value="">
-					
+					<form:password path="password" />
+					<!--  
 					<fieldset>
-						<legend>성별</legend>
+						<legend><spring:message code="user.joinform.gendertext"></spring:message></legend>
 						<label>여</label> <input type="radio" name="gender" value="female" checked="checked">
 						<label>남</label> <input type="radio" name="gender" value="male">
 					</fieldset>
+					-->
+					<form:radiobuttons path="gender" items="${userVo.genders }" />
 					
+	
 					<fieldset>
 						<legend>약관동의</legend>
 						<input id="agree-prov" type="checkbox" name="agreeProv" value="y">
 						<label>서비스 약관에 동의합니다.</label>
 					</fieldset>
-					
 					<input type="submit" value="가입하기">
 					
-				</form>
+				</form:form>
 			</div>
 		</div>
 		<c:import url="/WEB-INF/views/includes/navigation.jsp"></c:import>
