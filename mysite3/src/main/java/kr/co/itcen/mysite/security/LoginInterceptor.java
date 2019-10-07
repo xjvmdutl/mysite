@@ -36,6 +36,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		
 		//session처리를 해주면 된다.
 		HttpSession session=request.getSession(true);
+		System.out.println(authUser);
 		session.setAttribute("authUser", authUser);
 		
 		response.sendRedirect(request.getContextPath());

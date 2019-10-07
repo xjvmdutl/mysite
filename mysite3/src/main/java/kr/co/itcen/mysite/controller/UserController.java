@@ -1,18 +1,20 @@
 package kr.co.itcen.mysite.controller;
 
-import java.util.List;
 
-import javax.servlet.http.HttpSession;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import kr.co.itcen.mysite.security.Auth;
+import kr.co.itcen.mysite.security.AuthUser;
 
 import kr.co.itcen.mysite.service.UserService;
 import kr.co.itcen.mysite.vo.UserVo;
@@ -76,34 +78,40 @@ public class UserController {
 //		}
 //		return "redirect:/";
 //	}
+//	@Auth(role=Role.USER)
+//	@Auth("USER")
+	
+	@Auth("USER")
 	@RequestMapping(value="/update", method=RequestMethod.GET)
-	public String update(HttpSession session,Model model) {
-		UserVo authUser = (UserVo)session.getAttribute("authUser");
-		if(authUser==null){
-			return "redirect:/";
-		}
-		UserVo vo = userService.get(authUser.getNo());
+	public String update(
+			Model model,
+			@AuthUser UserVo authUser//-> 이걸 사용해야지만이 HttpSession을 뺄수가 있다.
+			//HttpSession session
+			) {
+		//UserVo authUser= (UserVo)session.getAttribute("authUser");
+		Long no = authUser.getNo();
+		System.out.println(authUser);
+		UserVo vo=userService.get(no);
+		
 		model.addAttribute("userVo",vo);
 		return "user/update";
 	}
+	
+//	@Auth("USER")
+	@Auth("USER")
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public String update(@ModelAttribute @Valid UserVo vo,
-			HttpSession session,
 			BindingResult result,
+			@AuthUser UserVo authUser,
 			Model model) {
-		UserVo authUser = (UserVo)session.getAttribute("authUser");
-		if(authUser==null){
-			return "redirect:/";
-		}
 		if(result.hasErrors()) {
 			model.addAllAttributes(result.getModel());
 			return "user/update";
 		}
-		vo=userService.get(authUser.getNo());
-		vo.setNo(vo.getNo());
+		
+		vo.setNo(authUser.getNo());
 		userService.update(vo);
 		authUser.setName(vo.getName());
-		session.setAttribute("authUser", authUser);
 		return "redirect:/";
 	}
 //	@ExceptionHandler(UserDaoException.class)//Excpetion핸들러로 작동

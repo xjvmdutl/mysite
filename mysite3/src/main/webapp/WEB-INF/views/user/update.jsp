@@ -23,18 +23,15 @@
 				method="post" 
 				action="${pageContext.servletContext.contextPath}/user/update" >
 				<form:input path="name" />
-					<spring:hasBindErrors name="userVo">
-					<br>
-						<c:if test='${errors.hasFieldErrors("name") }'>
-						<p style="font-weight:bold; color:red; text-align:left; padding:2px 0 0 0">
-							<spring:message code='${errors.getFieldError("name").codes[0] }' text='${errors.getFieldError("name").defaultMessage }'></spring:message>
-						</p>
-						</c:if>
-					</spring:hasBindErrors>
+				<p style="font-weight:bold; color:red; text-align:left; padding:2px 0 0 0">
+					<form:errors path="name" />
+				</p>
 					<label class="block-label" for="email">이메일</label>
+					<form:hidden path="email" />
 					<h4>${userVo.email }</h4>
 					<label class="block-label">패스워드</label>
 					<form:password path="password" />
+					<br>
 					<form:radiobuttons path="gender" items="${userVo.genders }" />
 					
 					<input type="submit" value="수정하기">
