@@ -53,15 +53,12 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		}
 		//9.메소드의 @Auth의 Role이 "ADMIN"인 경우//과제
 		if ("ADMIN".equals(role)) {
-			if (!"ADMIN".equals(authUser.getRole())) {
-				response.sendRedirect(request.getContextPath() + "/");
-				return false;
+			if ("ADMIN".equals(authUser.getRole())) {
+				return true;
 			}
-			return true;
 		}
-		
-		
-		return true;
+		response.sendRedirect(request.getContextPath() + "/");
+		return false;
 		
 	}
 	
