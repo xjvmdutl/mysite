@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.itcen.mysite.service.BoardService;
+import kr.co.itcen.mysite.service.PictureService;
 import kr.co.itcen.mysite.vo.BoardVo;
+import kr.co.itcen.mysite.vo.PictureVo;
 import kr.co.itcen.mysite.vo.UserVo;
 
 @Controller
@@ -22,6 +25,8 @@ import kr.co.itcen.mysite.vo.UserVo;
 public class BoardController {
 	@Autowired
 	private BoardService boardservice;
+	@Autowired
+	private PictureService pictureservice;
 	@RequestMapping({"","list"})
 	public String index(@RequestParam(value="page",required = false, defaultValue = "1") int page, @RequestParam(value="kwd",required = false,defaultValue="") String kwd,Model model) {
 		List<BoardVo> list= boardservice.getList((page-1)*5,5,kwd);
@@ -45,6 +50,8 @@ public class BoardController {
 	public String view(@PathVariable("no") Long no,Model model,HttpSession session) {
 		BoardVo vo=boardservice.get(no);
 		boardservice.updatehit(vo);
+		List<PictureVo> list = pictureservice.select(no);
+		model.addAttribute("list",list);
 		model.addAttribute("vo",vo);
 		return "board/view";
 	}
@@ -95,5 +102,16 @@ public class BoardController {
 	public String delete(@PathVariable("no") Long no){
 		boardservice.updatestatus(no);
 		return "redirect:/board";
+	}
+	@RequestMapping("/upload/{no}")
+
+
+
+	public String upload(@RequestParam(value = "file",required = false) MultipartFile multipartFile,
+			@PathVariable("no") Long no) {
+		PictureVo vo = new PictureVo();
+		vo.setBoard_no(no);
+		vo=pictureservice.store(multipartFile,vo);
+		return "redirect:/board/view/"+no;
 	}
 }

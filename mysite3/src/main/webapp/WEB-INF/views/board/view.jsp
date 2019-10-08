@@ -46,7 +46,19 @@
 							href="${pageContext.servletContext.contextPath }/board/modify/${vo.no }">글수정</a>
 					</c:if>
 				</div>
+				<form method="post" action="${pageContext.servletContext.contextPath }/board/upload/${vo.no }" enctype="multipart/form-data">
+					<label>파일1:</label>
+					<input type="file" name="file">
+					<br><br>
+					<input type="submit" value="upload">
+				</form>
 			</div>
+			<c:forEach items="${list }" var='picture' varStatus='status'>
+			<div class="result-images">
+			<h1>${status.index }</h1>
+			<img src="${pageContext.request.contextPath }/${picture.url }" style="width:300px"><br>
+			</div>
+			</c:forEach>
 		</div>
 
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">

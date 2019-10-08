@@ -59,7 +59,6 @@
 		<c:import url="/WEB-INF/views/includes/header.jsp"></c:import>
 		<div id="content">
 			<div id="user">
-
 				<form:form
 				 modelAttribute="userVo"
 				 id="join-form" 
