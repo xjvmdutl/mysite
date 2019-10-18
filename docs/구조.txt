@@ -1,0 +1,45 @@
+mysite4 - java config version
+1. maven project mysite4(자식 module)
+2. POM 설정
+3. web.xml설정
+
+4. AppConfig 설정
+    -DBConfig
+    -MyBatis
+
+5. WebConfig 설정(안쓰는 것들은 뺴고 Import하면 된다)
+    -MVCConfig(viewResolver,MessageConverter,.....)(MVC관련 설정)
+    -SecurityConfig(Interceptor,ArgumentResolver)
+    -MessageConfig
+    -FileUploadConfig
+
+6. GlobalExceptionHandler
+7. slf4j(Logback)
+
+mysite(project Root) 
+	|---/WEB-INF
+		|---classes [src/main/java, src/main/resources, /src/test/java, /src/test/resources]
+			|---kr
+			     |---co
+				|--itcen
+				        |---mysite
+					     |---config 
+						|------AppConfig.class(java파일)
+						|------WebConfig.class(java파일)
+				     	     |---app(웹과 관련되지만 이 어플리케이션에서만 사용할꺼 같다면 여기다 두어야한다.
+						|----mybatis(디렉토리)
+							|----configuration.xml
+							|----mapper
+								|------user.xml
+								|------board.xml
+								|------guestbook.xml
+				        |---config(이설정을 mysite에서 import해서 가지고 쓴다)
+					|-------app
+						|----DBConfig(현장에서는 mysql,Oracle등등 이 존재하게 되는데 필요한 거만 import해주면 된다)
+						|----MyBatisConfig
+						
+					|-------web
+						|----MVCConfig
+						|----SecurityConfig
+						|----MessageConfig
+						|----FileUploadConfig
