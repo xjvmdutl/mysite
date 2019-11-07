@@ -9,8 +9,13 @@
 		into guestbook 
 		values(null,#{name},#{password},#{contents},now())
 	]]>
+		<selectKey keyProperty="no" resultType="long" order="AFTER">
+			<![CDATA[
+				select last_insert_id()
+			]]>	
+		</selectKey>
 	</insert>
-	<select id="getlist" resultType="guestbookvo">
+	<select id="getlist" resultType="guestbookvo" >
 	<![CDATA[
 		select 	no,
 				name,
@@ -18,10 +23,9 @@
 				date_format(reg_date,'%Y-%m-%d %h:%i:%s') as reg_date
 		from guestbook 
 		order by reg_date desc
-		
 	]]>
 	</select>
-	<select id="getlist2" parameterType="long" resultType="guestbookvo">
+	<select id="getlist2" parameterType="long" resultType="guestbookvo" >
 	<![CDATA[
 		select 	no,
 				name,
@@ -31,13 +35,14 @@
 	]]>
 	<if test='_parameter > 0'>
 	<![CDATA[
-		where no > #{_parameter }
-		]]>
+		where no < #{startNo}
+	]]>
 	</if>
 	<![CDATA[
 		order by no desc
 		limit 0,5
 	]]>
+	
 	</select>
 	<delete id="delete" parameterType="guestbookvo">
 	<![CDATA[

@@ -29,4 +29,15 @@ public class GuestBookDao {
 		int count=sqlsession.delete("guestbook.delete",vo);
 	    return count==1;
 	}
+	public List<GuestBookVo> selectAll(Long startNo) {
+		List<GuestBookVo> result = sqlsession.selectList("guestbook.getlist2",startNo);
+	    return result;
+	}
+	public Boolean delete(Long no,String password) {
+		GuestBookVo vo = new GuestBookVo();
+		vo.setNo(no);
+		vo.setPassword(password);
+		
+	    return delete(vo);
+	}
 }
